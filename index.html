@@ -1,1 +1,158 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">            <!-- Zeichensatz UTF-8 -->
+  <title>QR-Code Scanner</title>    <!-- Titel der Webseite im Browser-Tab -->
+
+  <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;  /* Innenabsand und rahmen von allen Boxen*/
+    }
+
+    body {
+      margin: 0;                     /*Abstand nach außen*/
+      display: flex;                /* Haupt-Layout: Flexbox */
+      height: 100vh;               /* Volle Höhe*/
+      font-family: sans-serif;    /*schriftart*/
+    }
+
+/* Kamera-Box: Der Bereich, in dem das Kamerabild und der Button sind */
+.kamera-container {       
+  width: 640px;                   /* Die Box ist 640 Pixel breit */
+  display: flex;                 /* Flexbox-Layout → ermöglicht einfaches Anordnen von Elementen */
+  flex-direction: column;       /* Die Elemente (z. B. Video und Button) werden untereinander (vertikal) angeordnet */
+  align-items: center;         /* Inhalte werden horizontal zentriert (also in der Mitte der Box) */
+  padding: 20px;              /* Innenabstand von 20 Pixeln auf allen Seiten */
+}
+
+
+    video {
+  width: 100%;                       /* Das Video nimmt die volle Breite seines Containers ein */
+  max-height: 80vh;                 /* Maximale Höhe: 80%*/
+  border: 2px solid #333;        /* Eine 2px dicke, durchgezogene, dunkelgraue Umrandung */
+  border-radius: 10px;            /* Abgerundete Ecken mit 10px Radius */
+  transform: scaleX(-1);         /* Spiegelung des Videos */
+}
+
+
+button {
+  margin-top: 15px;                   /* Abstand von 15px nach oben */
+  padding: 12px 24px;                /* Innenabstand: 12px oben und unten, 24px rechts und links */
+  font-size: 18px;                  /* Schriftgröße: Die Schrift im Button ist 18px groß */
+  border: none;                    /* Kein sichtbarer Rand*/
+  border-radius: 8px;             /* Abgerundete Ecken 8px Radius */
+  background-color: #4CAF50;   /* Hintergrundfarbe des Buttons*/
+  color: white;               /* Textfarbe im Button: Weiß */
+  cursor: pointer;             /* Der Mauszeiger wird zu einer Hand beim Hover über den Button */
+}
+
+
+    button:hover {
+      background-color: #45a049; /* dunkleres Grün beim Hover */
+    }
+
+    #info {
+  flex-grow: 1;                         /* Der #info-Container kann den verfügbaren Platz im Flex-Container ausfüllen */
+  padding: 20px;                       /* Innenabstand von 20px rundherum innerhalb des Containers */
+  background-color: #ffffff;        /* hellgraue Hintergrundfarbe */
+  border-left: 3px solid #4CAF50;  /* Ein 3px dicker grüner Rand auf der linken Seite (#4CAF50) */
+  overflow-y: auto;                 /* Ermöglicht das vertikale Scrollen, wenn der Inhalt höher ist als der Container */
+}
+
+
+      #info h3 {
+      margin-top: 0;  /*entfernt abstand von h3 Element*/
+      }
+
+    #output {
+  margin-top: 10px;                     /* Abstand nach oben: 10px */
+  padding: 10px;                       /* Innenabstand: 10px  */
+  background: rgb(255, 255, 255);   /* Hintergrundfarbe des Elements */
+  border: 1px solid #ccc;          /* Ein 1px dicker, durchgezogener Rand in einem hellgrauen Farbton */
+  border-radius: 6px;               /* Abgerundete Ecken des Elements mit einem Radius von 6px */
+  min-height: 100px;               /* Das Element hat mindestens eine Höhe von 100px, auch wenn der Inhalt kleiner ist */
+}
+
+/* Wenn dem <body> die Klasse "dark-mode" hinzugefügt wird: */
+  body.dark-mode {
+  background-color: #121212;   /* Sehr dunkler Hintergrund für den ganzen Body */
+  color: #f0f0f0;             /* Helle Schriftfarbe, damit der Text gut lesbar bleibt */
+}
+
+/* Info-Bereich im Dunkelmodus */
+body.dark-mode #info {
+  background-color: #1e1e1e;   /* Dunkler Hintergrund für die Info-Box */
+  border-left-color: #4CAF50; /* Grüner Rand bleibt gleich wie im hellen Modus */
+}
+
+/* Der Kasten, in dem der erkannte QR-Code steht */
+body.dark-mode #output {
+  background-color: #2a2a2a;    /* Etwas helleres Dunkelgrau für den Hintergrund */
+  border-color: #555;          /* Dunkler Rahmen */
+  color: #f0f0f0;             /* Helle Schriftfarbe */
+}
+
+/* Allgemeine Gestaltung für alle Buttons im Dunkelmodus */
+body.dark-mode button {
+  background-color: #555;      /* Mitteldunkler Hintergrund für Buttons */
+  color: white;               /* Weiße Schrift auf den Buttons */
+}
+
+/* Wenn man im Dunkelmodus mit der Maus über einen Button fährt */
+body.dark-mode button:hover {
+  background-color: #777;     /* Etwas hellerer Ton beim Hover für bessere Rückmeldung */
+}
+
+canvas {
+      display: none; /* canvas wird unsichtbar gemacht*/
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Kamera-Container -->
+  <div class="kamera-container">
+    <video id="kamera" autoplay playsinline></video>        <!-- Video-Tag: Zeigt das Kamerabild an -->
+    <button id="toggleButton">Kamera starten</button>       <!-- Button zum Starten/Stoppen der Kamera -->
+    <canvas id="canvas"></canvas>                           <!-- Unsichtbares Canvas-Element für die Bildverarbeitung -->
+  </div>
+
+
+  <div id="info">                                                                                <!-- Info-Bereich -->     
+    <div style="display: flex; justify-content: space-between; align-items: center;">            <!-- Flexbox für die Titelzeile mit dem Button zum Kopieren -->
+      <h3 style="margin: 0;">QR-Code Info:</h3>                                                  <!-- QR-Code Info-Überschrift -->
+      <button id="copyButton" style="font-size: 14px; padding: 6px 12px;">Kopieren</button>      <!-- Button zum Kopieren der QR-Code-Daten -->
+    </div>
+
+
+<!-- Schaltfläche zum Umschalten zwischen Hell- und Dunkelmodus -->
+<button id="darkModeToggle" style="
+  position: fixed;            /* Der Button bleibt immer unten links sichtbar egal wie man scrollt */
+  bottom: 20px;               /* Abstand von 20 Pixeln zum unteren Rand */
+  left: 20px;                 /* Abstand von 20 Pixeln zum linken Rand */
+  padding: 10px 16px;         /* Innenabstand: oben/unten 10px, rechts/links 16px */
+  font-size: 14px;            /* Schriftgröße im Button */
+  background-color: #333;   /* Dunkelgraue Hintergrundfarbe */
+  color: white;             /* Weiße Schrift */
+  border: none;               /* Kein sichtbarer Rand */
+  border-radius: 6px;         /* Leicht abgerundete Ecken */
+  cursor: pointer;            /* Mauszeiger wird zur Hand, wenn man über den Button fährt */
+  z-index: 1000;              /* Der Button liegt oben über anderen Elementen */
+">🌙 Dunkelmodus</button>
+
+
+    <div id="output">Noch nichts erkannt</div>                                                   <!-- Bereich, in dem der erkannte QR-Code angezeigt wird -->
+
+
+    <div id="copyStatus" style="font-size: 12px; color: green; margin-top: 5px;"></div>       <!-- Statusanzeige, die bestätigt, ob der QR-Code kopiert wurde -->
+  </div>
+
+
+  <script src="script.js"></script>
+
+</body>
+</html>
 
