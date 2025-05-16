@@ -12,19 +12,19 @@
     }
 
     body {
-      margin: 0;                     /*Abstand nach außen*/
-      display: flex;                /* Haupt-Layout: Flexbox */
-      height: 100vh;               /* Volle Höhe*/
+      margin: 50;                  /*Abstand nach außen*/
+      display: flex;              /* Haupt-Layout: Flexbox */
+      height: 100vh;              /* Volle Höhe*/
       font-family: sans-serif;    /*schriftart*/
     }
 
 /* Kamera-Box: Der Bereich, in dem das Kamerabild und der Button sind */
 .kamera-container {       
-  width: 640px;                   /* Die Box ist 640 Pixel breit */
-  display: flex;                 /* Flexbox-Layout → ermöglicht einfaches Anordnen von Elementen */
-  flex-direction: column;       /* Die Elemente (z. B. Video und Button) werden untereinander (vertikal) angeordnet */
+  width: 640px;                /* Die Box ist 640 Pixel breit */
+  display: flex;               /* Flexbox-Layout → ermöglicht einfaches Anordnen von Elementen */
+  flex-direction: column;      /* Die Elemente (z. B. Video und Button) werden untereinander (vertikal) angeordnet */
   align-items: center;         /* Inhalte werden horizontal zentriert (also in der Mitte der Box) */
-  padding: 20px;              /* Innenabstand von 20 Pixeln auf allen Seiten */
+  padding: 20px;               /* Innenabstand von 20 Pixeln auf allen Seiten */
 }
 
 
@@ -33,7 +33,6 @@
   max-height: 80vh;                 /* Maximale Höhe: 80%*/
   border: 2px solid #333;        /* Eine 2px dicke, durchgezogene, dunkelgraue Umrandung */
   border-radius: 10px;            /* Abgerundete Ecken mit 10px Radius */
-  transform: scaleX(-1);         /* Spiegelung des Videos */
 }
 
 
@@ -77,26 +76,26 @@ button {
 
 /* Wenn dem <body> die Klasse "dark-mode" hinzugefügt wird: */
   body.dark-mode {
-  background-color: #121212;   /* Sehr dunkler Hintergrund für den ganzen Body */
+  background-color: #121212;  /* Sehr dunkler Hintergrund für den ganzen Body */
   color: #f0f0f0;             /* Helle Schriftfarbe, damit der Text gut lesbar bleibt */
 }
 
 /* Info-Bereich im Dunkelmodus */
 body.dark-mode #info {
-  background-color: #1e1e1e;   /* Dunkler Hintergrund für die Info-Box */
+  background-color: #1e1e1e;  /* Dunkler Hintergrund für die Info-Box */
   border-left-color: #4CAF50; /* Grüner Rand bleibt gleich wie im hellen Modus */
 }
 
 /* Der Kasten, in dem der erkannte QR-Code steht */
 body.dark-mode #output {
-  background-color: #2a2a2a;    /* Etwas helleres Dunkelgrau für den Hintergrund */
-  border-color: #555;          /* Dunkler Rahmen */
+  background-color: #2a2a2a;  /* Etwas helleres Dunkelgrau für den Hintergrund */
+  border-color: #555;         /* Dunkler Rahmen */
   color: #f0f0f0;             /* Helle Schriftfarbe */
 }
 
 /* Allgemeine Gestaltung für alle Buttons im Dunkelmodus */
 body.dark-mode button {
-  background-color: #555;      /* Mitteldunkler Hintergrund für Buttons */
+  background-color: #555;     /* Mitteldunkler Hintergrund für Buttons */
   color: white;               /* Weiße Schrift auf den Buttons */
 }
 
@@ -155,4 +154,3 @@ canvas {
 
 </body>
 </html>
-
